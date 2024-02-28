@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maj du Champion</title>
+</head>
+<body>
+    <form onsubmit="event.preventDefault(); updateChampion();">
+        <input type="text" name="name" placeholder="Nom du champion">
+        <input type="text" name="type" placeholder="Type du champion">
+        <button type="submit">Mettre à jour le champion</button>
+    </form>
+    <script>
+        let url = window.location.search;
+        let id = new URLSearchParams(url).get('id');
+
+        fetch(`http://localhost:3000/championlol/${id}`)
+            .then((response) => response.json())
+            .then((data) => {
+                document.querySelector('input[name="name"]').value = data.name;
+                document.querySelector('input[name="type"]').value = data.type;
+            })
+            .catch((error) => console.error('Erreur lors de la récupération du champion:', error));
+
+        const updateChampion = async () => {
+            let name = document.querySelector('input[name="name"]').value;
+            let type = document.querySelector('input[name="type"]').value;
+
+            let response = await fetch(`http://localhost:3000/championslol/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, type }),
+            });
+
+            if (response.ok) {
+                console.log("Champion mis à jour avec succès");
+                window.location.href = 'index.html';
+            } else {
+                console.error('Erreur lors de la mise à jour du champion:', await response.text());
+            }
+        };
+    </script>
+</body>
+</html>

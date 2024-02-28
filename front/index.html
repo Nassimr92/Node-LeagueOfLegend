@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Champion de LoL</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .formIndex {
+            margin-bottom: 20px;
+        }
+        .formIndex input, .formIndex button {
+            margin-top: 10px;
+            margin-right: 5px;
+        }
+        .styleChampion {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="formIndex">
+        <label for="championlol">Nom du champion</label>
+        <input type="text" id="championlol" name="championlol" />
+        <label for="type">type du champion</label>
+        <input type="text" id="type" name="type" />
+        <button onclick="sendChampion(document.querySelector('input[name=\'championlol\']').value, document.querySelector('input[name=\'type\']').value)">
+         Crée un nouveau champion
+        </button>
+    </div>
+    <h1>Tous les champions</h1>
+    <div id="championslol"></div>
+    <script>
+        fetch("http://localhost:3000/championslol")
+            .then(response => response.json())
+            .then(data => {
+                let champions = document.querySelector("#championslol");
+                data.forEach(champion => {
+                    champions.innerHTML += `
+                        <div class="styleChampion">
+                            <a href="championlol.html?id=${champion.id}"><h2>${champion.name}</h2></a>
+                            <p>${champion.type}</p>
+                        </div>
+                    `;
+                });
+            });
+
+        const sendChampion = async (name, type) => {
+            await fetch("http://localhost:3000/championslol", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ name: name, type: type }),
+            });
+            window.location.reload();
+        };
+    </script>
+</body>
+</html>
